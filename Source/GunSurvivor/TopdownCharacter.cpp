@@ -30,6 +30,23 @@ void ATopdownCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CanMove)
+	{
+		if (MovementDirection.Length() > 0.0f)
+		{
+			if (MovementDirection.Length() > 1.0f)
+			{
+				MovementDirection.Normalize();
+			}
+
+			FVector2D DistanceToMove = MovementDirection * MovementSpeed * DeltaTime;
+
+			FVector CurrentLocation = GetActorLocation();
+			FVector NewLocation = CurrentLocation + FVector(DistanceToMove.X, 0.0f, DistanceToMove.Y);
+
+			SetActorLocation(NewLocation);
+		}
+	}
 }
 
 void ATopdownCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -52,16 +69,19 @@ void ATopdownCharacter::MoveTriggered(const FInputActionValue& Value)
 {
 	FVector2D MoveActionValue = Value.Get<FVector2D>();
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, MoveActionValue.ToString());
+	if (CanMove)
+	{
+		MovementDirection = MoveActionValue;
+	}
 }
 
 void ATopdownCharacter::MoveCompleted(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("MoveCompleted"));
+	MovementDirection = FVector2D(0.0f, 0.0f);
 }
 
 void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot"));
+
 }
 

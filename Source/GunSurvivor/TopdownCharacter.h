@@ -31,9 +31,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputAction* IA_Move;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputAction* IA_Shoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MovementSpeed = 100.0f;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D MovementDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool CanMove = true;
 
 	ATopdownCharacter();
 
