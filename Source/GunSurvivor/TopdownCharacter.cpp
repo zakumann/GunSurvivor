@@ -26,6 +26,24 @@ void ATopdownCharacter::BeginPlay()
 	}
 }
 
+bool ATopdownCharacter::IsInMapBoundsHorizontal(float xPos)
+{
+	bool Result = true;
+
+	Result = (xPos > HorizontalLimits.X) && (xPos < HorizontalLimits.Y);
+
+	return Result;
+}
+
+bool ATopdownCharacter::IsInMapBoundsVertical(float zPos)
+{
+	bool Result = true;
+
+	Result = (zPos > VerticalLimits.X) && (zPos < VerticalLimits.Y);
+
+	return Result;
+}
+
 void ATopdownCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -42,7 +60,17 @@ void ATopdownCharacter::Tick(float DeltaTime)
 			FVector2D DistanceToMove = MovementDirection * MovementSpeed * DeltaTime;
 
 			FVector CurrentLocation = GetActorLocation();
-			FVector NewLocation = CurrentLocation + FVector(DistanceToMove.X, 0.0f, DistanceToMove.Y);
+			FVector NewLocation = CurrentLocation + FVector(DistanceToMove.X, 0.0f, 0.0f);
+			if (!IsInMapBoundsHorizontal(NewLocation.X))
+			{
+				NewLocation -= FVector(DistanceToMove.X, 0.0f, 0.0f);
+			}
+
+			NewLocation += FVector(0.0f, 0.0f, DistanceToMove.Y);
+			if (!IsInMapBoundsVertical(NewLocation.Z))
+			{
+				NewLocation -= FVector(0.0f, 0.0f, DistanceToMove.Y);
+			}
 
 			SetActorLocation(NewLocation);
 		}
@@ -72,16 +100,33 @@ void ATopdownCharacter::MoveTriggered(const FInputActionValue& Value)
 	if (CanMove)
 	{
 		MovementDirection = MoveActionValue;
+		CharacterFlipbook->SetFlipbook(RunFlipbook);
+
+		FVector FlipbookScale = CharacterFlipbook->GetComponentScale();
+		if (MovementDirection.X < 0.0f)
+		{
+			if (FlipbookScale.X > 0.0f)
+			{
+				CharacterFlipbook->SetWorldScale3D(FVector(-1.0f, 1.0f, 1.0f));
+			}
+		}
+		else if (MovementDirection.X > 0.0f)
+		{
+			if (FlipbookScale.X < 0.0f)
+			{
+				CharacterFlipbook->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
+			}
+		}
 	}
 }
 
 void ATopdownCharacter::MoveCompleted(const FInputActionValue& Value)
 {
 	MovementDirection = FVector2D(0.0f, 0.0f);
+	CharacterFlipbook->SetFlipbook(IdleFlipbook);
 }
 
 void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 {
 
 }
-
