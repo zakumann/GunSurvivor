@@ -14,6 +14,10 @@
 #include "InputActionValue.h"
 #include "GameFramework/Controller.h"
 
+#include "Engine/TimerHandle.h"
+
+#include "Bullet.h"
+
 #include "TopdownCharacter.generated.h"
 
 UCLASS()
@@ -58,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FVector2D VerticalLimits;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABullet> BulletActorToSpawn;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MovementSpeed = 100.0f;
 
@@ -66,6 +73,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool CanShoot = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ShootCooldownDurationInSeconds = 0.3f;
+
+	FTimerHandle ShootCooldownTimer;
 
 	ATopdownCharacter();
 
@@ -82,4 +97,6 @@ public:
 
 	bool IsInMapBoundsHorizontal(float xPos);
 	bool IsInMapBoundsVertical(float zPos);
+
+	void OnShootCooldownTimerTimeout();
 };
