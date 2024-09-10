@@ -27,6 +27,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	ATopdownCharacter* Player;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsAlive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanFollow = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MoementSpeed = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StopDistance = 20.0f;
+
 	AEnemy();
 
 	virtual void BeginPlay() override;

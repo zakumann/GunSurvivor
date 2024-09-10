@@ -22,7 +22,8 @@ void AEnemy::BeginPlay()
 		AActor *PlayerActor = UGameplayStatics::GetActorOfClass(GetWorld(), ATopdownCharacter::StaticClass());
 		if (PlayerActor)
 		{
-			Cast<ATopdownCharacter>(PlayerActor);
+			Player = Cast<ATopdownCharacter>(PlayerActor);
+			CanFollow = true;
 		}
 	}
 }
@@ -31,5 +32,20 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsAlive && CanFollow && Player)
+	{
+		FVector CurrentLocation = GetActorLocation();
+		FVector PlayerLocation = Player->GetActorLocation();
+
+		FVector DirectionToPlayer = PlayerLocation - CurrentLocation;
+		float DistanceToPlayer = DirectionToPlayer.Length();
+
+		if (DistanceToPlayer >= StopDistance)
+		{
+			DirectionToPlayer.Normalize();
+			FVector NewLocation = CurrentLocation + (DirectionToPlayer * MoementSpeed * DeltaTime);
+			SetActorLocation(NewLocation);
+		}
+	}
 }
 
