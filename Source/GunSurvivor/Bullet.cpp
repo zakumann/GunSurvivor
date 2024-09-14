@@ -63,7 +63,7 @@ void ABullet::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	if (Enemy && Enemy->IsAlive)
 	{
 		DisableBullet();
-		// Enemy->Die();
+		Enemy->Die();
 	}
 }
 

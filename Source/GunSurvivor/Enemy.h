@@ -8,6 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
 
+#include "Engine/TimerHandle.h"
+
 #include "TopdownCharacter.h"
 
 #include "Enemy.generated.h"
@@ -24,6 +26,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPaperFlipbookComponent* EnemyFlipbook;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPaperFlipbook* DeadFlipbookAsset;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	ATopdownCharacter* Player;
 
@@ -39,10 +44,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistance = 20.0f;
 
+	FTimerHandle DestroyTimer;
+
 	AEnemy();
 
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
+	void Die();
+
+	void OnDestroyTimerTimeout();
 };
