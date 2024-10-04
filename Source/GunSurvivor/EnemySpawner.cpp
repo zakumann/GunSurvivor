@@ -37,6 +37,7 @@ void AEnemySpawner::OnSpawnTimerTimeout()
 
 void AEnemySpawner::SpawnEnemy()
 {
+	// Spawn the enemy
 	FVector2D RandomPosition = FVector2D(FMath::VRand());
 	RandomPosition.Normalize();
 	RandomPosition *= SpawnDistance;
@@ -44,5 +45,21 @@ void AEnemySpawner::SpawnEnemy()
 	FVector EnemyLocation = GetActorLocation() + FVector(RandomPosition.X, 0.0f, RandomPosition.Y);
 
 	AEnemy *Enemy = GetWorld()->SpawnActor<AEnemy>(EnemyActorToSpawn, EnemyLocation, FRotator::ZeroRotator);
-}
 
+	// Increase The Difficulty
+	TotalEnemyCount += 1;
+	if ((TotalEnemyCount % DifficultySpawnInterval) == 0)
+	{
+		if (SpawnTime > SpawnTimeMinimumLimit)
+		{
+			SpawnTime -= DecreaseSpawnTimerByEveryInterval;
+			if (SpawnTime < SpawnTimeMinimumLimit)
+			{
+				SpawnTime = SpawnTimeMinimumLimit;
+			}
+
+			StopSpawning();
+			StartSpawning();
+		}
+	}
+}
