@@ -1,5 +1,7 @@
 #include "EnemySpawner.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AEnemySpawner::AEnemySpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -10,6 +12,19 @@ AEnemySpawner::AEnemySpawner()
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AGameModeBase *GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	if (GameMode)
+	{
+		MyGameMode = Cast<AGunSurvivorsGameMode>(GameMode);
+		check(MyGameMode);
+	}
+
+	AActor* PlayerActor = UGameplayStatics::GetActorOfClass(GetWorld(), ATopdownCharacter::StaticClass());
+	if (PlayerActor)
+	{
+		Player = Cast<ATopdownCharacter>(PlayerActor);
+	}
 	
 	StartSpawning();
 }
@@ -45,6 +60,7 @@ void AEnemySpawner::SpawnEnemy()
 	FVector EnemyLocation = GetActorLocation() + FVector(RandomPosition.X, 0.0f, RandomPosition.Y);
 
 	AEnemy *Enemy = GetWorld()->SpawnActor<AEnemy>(EnemyActorToSpawn, EnemyLocation, FRotator::ZeroRotator);
+	SetupEnemy(Enemy);
 
 	// Increase The Difficulty
 	TotalEnemyCount += 1;
@@ -62,4 +78,21 @@ void AEnemySpawner::SpawnEnemy()
 			StartSpawning();
 		}
 	}
+}
+
+void AEnemySpawner::SetupEnemy(AEnemy* Enemy)
+{
+	if (Enemy)
+	{
+		Enemy->Player = Player;
+		Enemy->CanFollow = true;
+		Enemy->EnemyDiedDelegate.AddDynamic(this, &AEnemySpawner::OnEnemyDied);
+	}
+}
+
+void AEnemySpawner::OnEnemyDied()
+{
+	int ScoreToAdd = 10;
+	MyGameMode->AddScore(ScoreToAdd);
+
 }
