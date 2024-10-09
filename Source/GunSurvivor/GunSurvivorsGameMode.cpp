@@ -22,13 +22,11 @@ void AGunSurvivorsGameMode::SetScore(int NewScore)
 	if (NewScore >= 0)
 	{
 		Score = NewScore;
+		ScoreChangedDelegate.Broadcast(Score);
 	}
 }
 void AGunSurvivorsGameMode::AddScore(int AmountToAdd)
 {
 	int NewScore = Score + AmountToAdd;
 	SetScore(NewScore);
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Score: %d"), Score));
-
 }
