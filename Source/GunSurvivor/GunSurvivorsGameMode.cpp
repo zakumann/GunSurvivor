@@ -3,6 +3,8 @@
 
 #include "GunSurvivorsGameMode.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AGunSurvivorsGameMode::AGunSurvivorsGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -29,4 +31,13 @@ void AGunSurvivorsGameMode::AddScore(int AmountToAdd)
 {
 	int NewScore = Score + AmountToAdd;
 	SetScore(NewScore);
+}
+
+void AGunSurvivorsGameMode::RestartGame()
+{
+	GetWorldTimerManager().SetTimer(RestartGameTimer, this, &AGunSurvivorsGameMode::OnRestartGaemTimerTimeout, 1.0f, false, TimeBeforeRestart);
+}
+void AGunSurvivorsGameMode::OnRestartGaemTimerTimeout()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("MainLevel"));
 }
